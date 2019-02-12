@@ -17,6 +17,18 @@ func dataSourceGiteaUser() *schema.Resource {
 				Type:     schema.TypeString,
 				Optional: true,
 			},
+			"fullname": {
+				Type:     schema.TypeString,
+				Computed: true,
+			},
+			"email": {
+				Type:     schema.TypeString,
+				Computed: true,
+			},
+			"avatar_url": {
+				Type:     schema.TypeString,
+				Computed: true,
+			},
 		},
 	}
 }
@@ -33,8 +45,9 @@ func dataSourceGiteaUserRead(d *schema.ResourceData, meta interface{}) error {
 	}
 
 	d.SetId(fmt.Sprintf("%d", user.ID))
-	d.Set("full_name", user.FullName)
 	d.Set("username", user.UserName)
+	d.Set("fullname", user.FullName)
 	d.Set("email", user.Email)
+	d.Set("avatar_url", user.AvatarURL)
 	return nil
 }

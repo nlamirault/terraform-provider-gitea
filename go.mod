@@ -4,6 +4,7 @@ require (
 	code.gitea.io/sdk v0.0.0-20190208103852-600c19aa03dc
 	github.com/apparentlymart/go-cidr v1.0.0 // indirect
 	github.com/blang/semver v3.5.1+incompatible // indirect
+	github.com/gogits/go-gogs-client v0.0.0-20181217004319-1cd0db3113de
 	github.com/hashicorp/go-getter v1.0.3 // indirect
 	github.com/hashicorp/go-hclog v0.0.0-20190109152822-4783caec6f2e // indirect
 	github.com/hashicorp/go-plugin v0.0.0-20190129155509-362c99b11937 // indirect
