@@ -1,9 +1,6 @@
 package gitea
 
 import (
-	"fmt"
-	"strings"
-
 	"github.com/hashicorp/terraform/helper/schema"
 	"github.com/hashicorp/terraform/terraform"
 )
@@ -28,11 +25,10 @@ func Provider() terraform.ResourceProvider {
 				Description: descriptions["token"],
 			},
 			"base_url": {
-				Type:         schema.TypeString,
-				Optional:     true,
-				DefaultFunc:  schema.EnvDefaultFunc("GITEA_BASE_URL", ""),
-				Description:  descriptions["base_url"],
-				ValidateFunc: validateAPIURLVersion,
+				Type:        schema.TypeString,
+				Optional:    true,
+				DefaultFunc: schema.EnvDefaultFunc("GITEA_BASE_URL", ""),
+				Description: descriptions["base_url"],
 			},
 		},
 		ResourcesMap: map[string]*schema.Resource{
@@ -52,12 +48,4 @@ func providerConfigure(d *schema.ResourceData) (interface{}, error) {
 		BaseURL: d.Get("base_url").(string),
 	}
 	return config.Client(), nil
-}
-
-func validateAPIURLVersion(value interface{}, key string) (ws []string, es []error) {
-	v := value.(string)
-	if !strings.HasSuffix(v, "/api/v1") || !strings.HasSuffix(v, "/api/v1/") {
-		es = append(es, fmt.Errorf("The Gitea provider is only compatible with version 1 of the API: %s", v))
-	}
-	return
 }

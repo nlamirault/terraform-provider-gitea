@@ -85,12 +85,13 @@ func resourceGiteaUserCreate(d *schema.ResourceData, meta interface{}) error {
 	if err != nil {
 		return fmt.Errorf("unable to create user: %v", err)
 	}
+	d.SetId(fmt.Sprintf("%d", user.ID))
 
 	if d.Get("is_admin").(bool) {
 		return resourceGiteaUserUpdate(d, meta)
 	}
 
-	return resourceGiteaUserRead(d, user)
+	return resourceGiteaUserRead(d, meta)
 }
 
 func resourceGiteaUserRead(d *schema.ResourceData, meta interface{}) error {
