@@ -35,16 +35,12 @@ func Provider() terraform.ResourceProvider {
 				ValidateFunc: validateAPIURLVersion,
 			},
 		},
-		// ResourcesMap: map[string]*schema.Resource{
-		// 	"gitea_project": resourceGiteaProject(),
-		// 	"gitea_user":    resourceGiteaUser(),
-		// },
-		// DataSourcesMap: map[string]*schema.Resource{
-		// 	"gitea_projects": dataSourceGiteaProjects(),
-		// 	"gitea_project":  dataSourceGiteaProject(),
-		// 	"gitea_users":    dataSourceGiteaUsers(),
-		// 	"gitea_user":     dataSourceGiteaUser(),
-		// },
+		ResourcesMap: map[string]*schema.Resource{
+			"gitea_user": resourceGiteaUser(),
+		},
+		DataSourcesMap: map[string]*schema.Resource{
+			"gitea_user": dataSourceGiteaUser(),
+		},
 		ConfigureFunc: providerConfigure,
 	}
 
