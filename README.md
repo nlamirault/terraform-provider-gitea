@@ -56,8 +56,8 @@ $ make test
 
 In order to run the full suite of acceptance tests, export the environment variables:
 
-- `GITEA_TOKEN` //token for account with admin priviliges
-- `GITEA_BASE_URL` //URL with api part e.g. `http://localhost:3000/`
+- `GITEA_TOKEN` token for account with admin priviliges
+- `GITEA_BASE_URL` URL with api part e.g. `http://localhost:3000/`
 
 and run `make testacc`.
 
