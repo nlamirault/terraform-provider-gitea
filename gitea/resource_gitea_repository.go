@@ -16,7 +16,7 @@ func resourceGiteaRepository() *schema.Resource {
 		Delete: resourceGiteaRepositoryDelete,
 
 		Schema: map[string]*schema.Schema{
-			"username": &schema.Schema{
+			"owner": &schema.Schema{
 				Type:     schema.TypeString,
 				Required: true,
 				ForceNew: true,
@@ -25,6 +25,10 @@ func resourceGiteaRepository() *schema.Resource {
 				Type:     schema.TypeString,
 				Required: true,
 			},
+			// "fullname": {
+			// 	Type:     schema.TypeString,
+			// 	Required: true,
+			// },
 			"description": {
 				Type:     schema.TypeString,
 				Optional: true,
@@ -58,9 +62,22 @@ func resourceGiteaRepository() *schema.Resource {
 	}
 }
 
+func resourceGiteaRepositorySetToState(d *schema.ResourceData, repo *giteaapi.Repository) error {
+	if err := d.Set("owner", repo.Owner.UserName); err != nil {
+		return err
+	}
+	if err := d.Set("name", repo.Name); err != nil {
+		return err
+	}
+	if err := d.Set("description", repo.Description); err != nil {
+		return err
+	}
+	return nil
+}
+
 func resourceGiteaRepositoryCreate(d *schema.ResourceData, meta interface{}) error {
 	client := meta.(*giteaapi.Client)
-	username := d.Get("username").(string)
+	owner := d.Get("owner").(string)
 	options := giteaapi.CreateRepoOption{
 		Name:        d.Get("name").(string),
 		Description: d.Get("description").(string),
@@ -71,20 +88,28 @@ func resourceGiteaRepositoryCreate(d *schema.ResourceData, meta interface{}) err
 		Readme:      d.Get("readme").(string),
 	}
 
-	log.Printf("[DEBUG] create gitea repository %q", options.Name)
+	log.Printf("[DEBUG] create repository %s", options.Name)
 
-	repository, err := client.AdminCreateRepo(username, options)
+	repository, err := client.AdminCreateRepo(owner, options)
 	if err != nil {
 		return err
 	}
-
-	id := fmt.Sprintf("%d", repository.ID)
-	d.SetId(id)
+	log.Printf("[DEBUG] Repository created: %v", repository)
+	d.SetId(fmt.Sprintf("%d", repository.ID))
 	return nil
 }
 
 func resourceGiteaRepositoryRead(d *schema.ResourceData, meta interface{}) error {
-	return nil
+	client := meta.(*giteaapi.Client)
+	owner := d.Get("owner").(string)
+	name := d.Get("name").(string)
+	log.Printf("[DEBUG] read repository %q %s %s", d.Id(), owner, name)
+	repo, err := client.GetRepo(owner, name)
+	if err != nil {
+		return fmt.Errorf("unable to retrieve repository %s %s", owner, name)
+	}
+	log.Printf("[DEBUG] repository find: %v", repo)
+	return resourceGiteaRepositorySetToState(d, repo)
 }
 
 func resourceGiteaRepositoryUpdate(d *schema.ResourceData, meta interface{}) error {
@@ -93,8 +118,8 @@ func resourceGiteaRepositoryUpdate(d *schema.ResourceData, meta interface{}) err
 
 func resourceGiteaRepositoryDelete(d *schema.ResourceData, meta interface{}) error {
 	client := meta.(*giteaapi.Client)
-	username := d.Get("username").(string)
+	owner := d.Get("owner").(string)
 	name := d.Get("name").(string)
-	log.Printf("[DEBUG] delete gitea repository: %s %s", username, name)
-	return client.DeleteRepo(username, name)
+	log.Printf("[DEBUG] delete repository: %s %s", owner, name)
+	return client.DeleteRepo(owner, name)
 }
