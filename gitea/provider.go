@@ -5,7 +5,11 @@ import (
 	"github.com/hashicorp/terraform/terraform"
 )
 
-var descriptions map[string]string
+var (
+	ENV_GITEA_BASE_URL = "GITEA_BASE_URL"
+	ENV_GITEA_TOKEN    = "GITEA_TOKEN"
+	descriptions       map[string]string
+)
 
 func init() {
 	descriptions = map[string]string{
@@ -21,24 +25,24 @@ func Provider() terraform.ResourceProvider {
 			"token": {
 				Type:        schema.TypeString,
 				Required:    true,
-				DefaultFunc: schema.EnvDefaultFunc("GITEA_TOKEN", nil),
+				DefaultFunc: schema.EnvDefaultFunc(ENV_GITEA_TOKEN, nil),
 				Description: descriptions["token"],
 			},
 			"base_url": {
 				Type:        schema.TypeString,
 				Optional:    true,
-				DefaultFunc: schema.EnvDefaultFunc("GITEA_BASE_URL", ""),
+				DefaultFunc: schema.EnvDefaultFunc(ENV_GITEA_BASE_URL, ""),
 				Description: descriptions["base_url"],
 			},
 		},
 		ResourcesMap: map[string]*schema.Resource{
-			"gitea_user":  resourceGiteaUser(),
-			"gitea_repo":  resourceGiteaRepository(),
-			"gitea_label": resourceGiteaLabel(),
+			"gitea_user":       resourceGiteaUser(),
+			"gitea_repository": resourceGiteaRepository(),
+			"gitea_label":      resourceGiteaLabel(),
 		},
 		DataSourcesMap: map[string]*schema.Resource{
-			"gitea_user": dataSourceGiteaUser(),
-			"gitea_repo": dataSourceGiteaRepository(),
+			"gitea_user":       dataSourceGiteaUser(),
+			"gitea_repository": dataSourceGiteaRepository(),
 		},
 		ConfigureFunc: providerConfigure,
 	}

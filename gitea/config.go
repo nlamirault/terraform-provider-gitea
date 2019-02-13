@@ -1,6 +1,8 @@
 package gitea
 
 import (
+	"log"
+
 	"code.gitea.io/sdk/gitea"
 )
 
@@ -12,5 +14,6 @@ type Config struct {
 
 // Client returns a *gitea.Client to interact with the configured Gitea instance
 func (c *Config) Client() interface{} {
+	log.Printf("[DEBUG] Create client using configuration : %v", c)
 	return gitea.NewClient(c.BaseURL, c.Token)
 }

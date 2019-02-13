@@ -4,12 +4,14 @@ import (
 	"os"
 	"testing"
 
+	giteaapi "code.gitea.io/sdk/gitea"
 	"github.com/hashicorp/terraform/helper/schema"
 	"github.com/hashicorp/terraform/terraform"
 )
 
 var testAccProviders map[string]terraform.ResourceProvider
 var testAccProvider *schema.Provider
+var testAccGiteaClient *giteaapi.Client
 
 func init() {
 	testAccProvider = Provider().(*schema.Provider)
@@ -29,7 +31,18 @@ func TestProvider_impl(t *testing.T) {
 }
 
 func testAccPreCheck(t *testing.T) {
-	if v := os.Getenv("GITEA_TOKEN"); v == "" {
-		t.Fatal("GITEA_TOKEN must be set for acceptance tests")
+	if v := os.Getenv(ENV_GITEA_BASE_URL); v == "" {
+		t.Fatalf("%s must be set for acceptance tests", ENV_GITEA_BASE_URL)
+	}
+	if v := os.Getenv(ENV_GITEA_TOKEN); v == "" {
+		t.Fatalf("%s must be set for acceptance tests", ENV_GITEA_TOKEN)
+	}
+	if testAccGiteaClient == nil {
+		config := Config{
+			BaseURL: os.Getenv(ENV_GITEA_BASE_URL),
+			Token:   os.Getenv(ENV_GITEA_TOKEN),
+		}
+
+		testAccGiteaClient = config.Client().(*giteaapi.Client)
 	}
 }

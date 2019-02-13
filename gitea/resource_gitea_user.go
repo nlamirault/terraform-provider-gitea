@@ -19,10 +19,6 @@ func resourceGiteaUser() *schema.Resource {
 		},
 
 		Schema: map[string]*schema.Schema{
-			"gitea_id": {
-				Type:     schema.TypeString,
-				Computed: true,
-			},
 			"login": {
 				Type:     schema.TypeString,
 				Required: true,
@@ -65,6 +61,12 @@ func resourceGiteaUserSetToState(d *schema.ResourceData, user *giteaapi.User) er
 	if err := d.Set("fullname", user.FullName); err != nil {
 		return err
 	}
+	if err := d.Set("email", user.Email); err != nil {
+		return err
+	}
+	if err := d.Set("avatar_url", user.AvatarURL); err != nil {
+		return err
+	}
 	return nil
 }
 
@@ -79,13 +81,13 @@ func resourceGiteaUserCreate(d *schema.ResourceData, meta interface{}) error {
 		Username:   d.Get("username").(string),
 	}
 
-	log.Printf("[DEBUG] create gitea user %q", options.Username)
+	log.Printf("[DEBUG] create user %q", options.Username)
 
 	user, err := client.AdminCreateUser(options)
 	if err != nil {
 		return fmt.Errorf("unable to create user: %v", err)
 	}
-	log.Printf("[DEBUG] User created: %v", user)
+	log.Printf("[DEBUG] user created: %v", user)
 	d.SetId(fmt.Sprintf("%d", user.ID))
 	if d.Get("is_admin").(bool) {
 		return resourceGiteaUserUpdate(d, meta)
@@ -101,9 +103,8 @@ func resourceGiteaUserRead(d *schema.ResourceData, meta interface{}) error {
 	if err != nil {
 		return fmt.Errorf("unable to retrieve user %s", username)
 	}
-	log.Printf("[DEBUG] User find: %v", user)
+	log.Printf("[DEBUG] user find: %v", user)
 	return resourceGiteaUserSetToState(d, user)
-
 }
 
 func resourceGiteaUserUpdate(d *schema.ResourceData, meta interface{}) error {
