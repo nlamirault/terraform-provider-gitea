@@ -1,4 +1,4 @@
-./terraform-provider-gitea
+terraform-provider-gitea
 
 *.dll
 *.exe
