@@ -24,6 +24,10 @@ func resourceGiteaOrganization() *schema.Resource {
 				Type:     schema.TypeString,
 				Required: true,
 			},
+			"fullname": {
+				Type:     schema.TypeString,
+				Required: true,
+			},
 			"description": {
 				Type:     schema.TypeString,
 				Optional: true,
@@ -38,6 +42,9 @@ func resourceGiteaOrganization() *schema.Resource {
 
 func resourceGiteaOrganizationSetToState(d *schema.ResourceData, org *giteaapi.Organization) error {
 	if err := d.Set("username", org.UserName); err != nil {
+		return err
+	}
+	if err := d.Set("fullname", org.UserName); err != nil {
 		return err
 	}
 	if err := d.Set("description", org.Description); err != nil {
@@ -88,7 +95,8 @@ func resourceGiteaOrganizationUpdate(d *schema.ResourceData, meta interface{}) e
 }
 
 func resourceGiteaOrganizationDelete(d *schema.ResourceData, meta interface{}) error {
-	client := meta.(*giteaapi.Client)
-	log.Printf("[DEBUG] delete organization %s", d.Id())
-	return client.AdminDeleteUser(d.Get("username").(string))
+	// client := meta.(*giteaapi.Client)
+	// log.Printf("[DEBUG] delete organization %s", d.Id())
+	// return client.AdminDeleteOrganization(d.Get("username").(string))
+	return nil
 }

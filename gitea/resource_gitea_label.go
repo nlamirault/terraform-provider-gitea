@@ -75,7 +75,7 @@ func resourceGiteaLabelRead(d *schema.ResourceData, meta interface{}) error {
 	}
 	owner := d.Get("owner").(string)
 	repository := d.Get("repository").(string)
-	log.Printf("[DEBUG] read gitea label %q", labelId)
+	log.Printf("[DEBUG] read label %q", labelId)
 
 	label, err := client.GetRepoLabel(owner, repository, labelId)
 	if err != nil {
